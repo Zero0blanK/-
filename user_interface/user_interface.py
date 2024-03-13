@@ -7,7 +7,7 @@ from music_player_frame import Music_Player_Frame
 from musicPlaylist_frame import MusicPlaylist_Frame
 
 
-class User_App(customtkinter.CTk):
+class User_App(customtkinter.CTk):               
     def __init__(self):
         super().__init__()  
         self.title('Modern User Interface')
@@ -23,9 +23,10 @@ class User_App(customtkinter.CTk):
         self.menu_frame.grid(row=0, column=0, padx=(10, 10), pady=(10, 0), sticky='nwse')
         
         self.musicplayer_frame = Music_Player_Frame(self)
-        self.musicplayer_frame.grid(row=0, column=3, padx=(0, 10), pady=(10, 0), ipady=400, ipadx=42)
-
-        self.musicPlaylist_frame = MusicPlaylist_Frame(self)
+        self.musicplayer_frame.grid(row=0, column=3, padx=(0, 10), pady=(10, 0), ipady=400, ipadx=42)  
+        self.musicplayer_frame.song_list = self.musicplayer_frame.song_list  
+        
+        self.musicPlaylist_frame = MusicPlaylist_Frame(self, self.musicplayer_frame)
         self.musicPlaylist_frame.grid(row=0, column=1, padx=(0, 10), pady=(10, 0), sticky='nwse', ipadx=38)
     
     def stop_music(self):
@@ -37,11 +38,15 @@ class User_App(customtkinter.CTk):
         if path:
             os.chdir(path)
             songs=os.listdir(path)
-            for song in songs:
-                if song.endswith('.mp3'):
-                    self.musicplayer_frame.song_list.append(os.path.join(path, song))
-                    self.musicPlaylist_frame.playlist.insert(END, song) 
-                    
+            if songs:
+                self.musicPlaylist_frame.playlist.delete(0, END)
+                for song in songs:
+                    if song.endswith('.mp3'):
+                        full_path = os.path.join(path, song)
+                        self.musicplayer_frame.song_list.append(full_path)
+                        self.musicPlaylist_frame.playlist.insert(END, song)
+                        self.musicPlaylist_frame.playlist.update_idletasks()  # Force update of the playlist widget
+        
 if __name__ == '__main__':
     app = User_App()
     app.mainloop()

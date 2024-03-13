@@ -8,11 +8,11 @@ import time
 
 
 class Music_Player_Frame(customtkinter.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, song_list=[]):
         super().__init__(master)
         pygame.mixer.init()
         
-        self.song_list = []
+        self.song_list = song_list
         self.song_cover_path = 'C:/Users/April Bords/OneDrive/Desktop/Programming/Practical Coding/Python/MusicPlayer/album_cover'
         self.song_cover_files = []
         self.n = 0
@@ -83,6 +83,7 @@ class Music_Player_Frame(customtkinter.CTkFrame):
         self.threading()
         self.get_albumcover()
         
+        print("Song list in Music_Player_Frame:", self.song_list)
         pygame.mixer.music.load(self.song_list[self.n])
         pygame.mixer.music.play(loops=1)
         if self.playing:

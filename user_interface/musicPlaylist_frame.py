@@ -1,13 +1,15 @@
 import customtkinter
 from tkinter import *
 
+import pygame
+
 from music_player_frame import Music_Player_Frame
 
 class MusicPlaylist_Frame(customtkinter.CTkScrollableFrame):
-    def __init__(self, master):
+    def __init__(self, master, musicplayer_frame):
         super().__init__(master)
         
-        self.musicplayer_frame = Music_Player_Frame(self)
+        self.musicplayer_frame = musicplayer_frame
         
         music_frame = customtkinter.CTkScrollableFrame(self, width=500, height=250)
         music_frame.grid(row=1, column=0)
@@ -19,5 +21,7 @@ class MusicPlaylist_Frame(customtkinter.CTkScrollableFrame):
     def play_selected_song(self, event):
         selected_index = self.playlist.curselection()
         if selected_index:
-            index = selected_index[0]
+            index = int(selected_index[0])
+            if self.musicplayer_frame.playing:
+                pygame.mixer.music.unpause()  # Stop the currently playing music
             self.musicplayer_frame.play_music(index)
