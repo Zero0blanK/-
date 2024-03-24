@@ -13,7 +13,7 @@ class Music_Player_Frame(customtkinter.CTkFrame):
         pygame.mixer.init()
         
         self.song_list = song_list
-        self.song_cover_path = 'C:/Users/April Bords/OneDrive/Desktop/Programming/Practical Coding/Python/MusicPlayer/album_cover'
+        self.song_cover_path = 'C:/Users/April Bords/OneDrive/Desktop/Programming/Practical Coding/Python/MusicPlayer/album_covers'
         self.song_cover_files = []
         self.n = 0
 
@@ -53,7 +53,7 @@ class Music_Player_Frame(customtkinter.CTkFrame):
             self.label1.place(x=15, y=15)
             
         if self.song_list:
-            self.stripped_string = self.song_list[self.n][36:-4]
+            self.stripped_string = os.path.basename(self.song_list[self.n][36:-4])
             if hasattr(self, 'song_name_label'): # Check if there's an existing label
                 self.song_name_label.destroy()
 
@@ -76,14 +76,13 @@ class Music_Player_Frame(customtkinter.CTkFrame):
         self.progress_thread = Thread(target=self.progress_bar)
         self.progress_thread.start()
     
-    def play_music(self, index=None):
+    def play_music(self, index=None, library_name='General'):
         if index is not None:
             self.n = index
 
         self.threading()
         self.get_albumcover()
         
-        print("Song list in Music_Player_Frame:", self.song_list)
         pygame.mixer.music.load(self.song_list[self.n])
         pygame.mixer.music.play(loops=1)
         if self.playing:

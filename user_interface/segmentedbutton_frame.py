@@ -2,11 +2,12 @@ from PIL import Image
 import customtkinter
 
 class Segmentedbutton_Frame(customtkinter.CTkFrame):
-    def __init__(self, master, title, values):
+    def __init__(self, master, title, values, command):
         super().__init__(master)
         self.values = values
         self.title = title
         self.menu = []
+        self.command = command
         self.variable = customtkinter.StringVar(value=values[0])
         
         #add another library for music function is not yet added
@@ -19,7 +20,11 @@ class Segmentedbutton_Frame(customtkinter.CTkFrame):
         self.image_label.grid(column=1, row=0, pady=(0, 5), padx=(0,10), sticky='we')
         
         for i in range(len(self.values)):
-            segmented_button = customtkinter.CTkSegmentedButton(self, values=[self.values[i]])
+            segmented_button = customtkinter.CTkSegmentedButton(self, values=[self.values[i]], command=lambda v=self.values[i]: self.handle_library_selection(v))
             segmented_button.grid(column=0, row=i+1, pady=(5,0), sticky='wne', ipadx=40, ipady=3)
             self.menu.append(segmented_button)
             segmented_button.configure(variable=self.variable)
+
+    def handle_library_selection(self, value):
+        if self.command:
+            self.command(value)
