@@ -13,7 +13,12 @@ class Music_Player_Frame(customtkinter.CTkFrame):
         pygame.mixer.init()
         
         self.song_list = song_list
-        self.song_cover_path = 'C:/Users/April Bords/OneDrive/Desktop/Programming/Practical Coding/Python/MusicPlayer/album_covers'
+        
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        parent_directory = os.path.abspath(os.path.join(current_directory, os.pardir))
+        album_covers_directory = os.path.join(parent_directory, 'album_covers')
+        self.song_cover_path = album_covers_directory
+        
         self.song_cover_files = []
         self.n = 0
 
@@ -42,7 +47,7 @@ class Music_Player_Frame(customtkinter.CTkFrame):
         self.song_cover_files.clear()
 
         for album in os.listdir(self.song_cover_path):
-            if album.endswith('.jpg'):
+            if album.endswith(('.jpg', '.png')):
                 self.song_cover_files.append(os.path.join(self.song_cover_path, album))
                 
         if self.song_cover_files:        

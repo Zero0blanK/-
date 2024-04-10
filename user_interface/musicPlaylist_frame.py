@@ -29,8 +29,7 @@ class MusicPlaylist_Frame(customtkinter.CTkScrollableFrame):
                 pygame.mixer.music.unpause()  # Stop the currently playing music
             # Retrieve the library name for the selected song
             selected_song = self.musicplayer_frame.song_list[index]
-            library_name = selected_song[1]
-            self.musicplayer_frame.play_music(index, library_name)
+            self.musicplayer_frame.play_music(index)
     
     def update_playlist(self, library_name, song_library):
         self.selected_library = library_name

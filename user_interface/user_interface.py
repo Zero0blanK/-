@@ -1,5 +1,7 @@
+import json
 import os
-from tkinter import END, filedialog
+import shutil
+from tkinter import END, filedialog, messagebox
 import customtkinter
 import pygame
 from segmentedbutton_frame import Segmentedbutton_Frame
@@ -32,31 +34,54 @@ class User_App(customtkinter.CTk):
         
         self.song_library = []  
     
-    
     def stop_music(self):
         pygame.mixer.music.stop()  # Stop music playback
         self.destroy()  
         
     def open_folder(self):
-        path = filedialog.askdirectory()
-        if path:
-            os.chdir(path)
-            songs=os.listdir(path)
-            if songs:
-                self.musicPlaylist_frame.playlist.delete(0, END)
-                for song in songs:
-                    if song.endswith('.mp3'):
-                        full_path = os.path.join(path, song)
-                        # Append the song to the song list
-                        self.musicplayer_frame.song_list.append(full_path)
-                        # Append the library name separately
-                        self.song_library.append(self.menu_frame.variable.get())
-                        self.musicPlaylist_frame.playlist.insert(END, song)
-                        self.musicPlaylist_frame.playlist.update_idletasks()  # Force update of the playlist widget
+        while True:
+            # Allow the user to select individual music files and album covers
+            music_files = filedialog.askopenfilenames(title="Select Music Files", filetypes=[("MP3 Files", "*.mp3")])
+            if not music_files:
+                break
+            
+            music_exists = False
+            for music_file in music_files:
+                music_name = os.path.basename(music_file)
+                music_path = os.path.join(os.getcwd(), 'music', music_name)
+
+                if os.path.exists(music_path):
+                    music_exists = True
+                    break
+            
+            if music_exists:
+                messagebox.showinfo("Duplicate Music", "One or more selected music files already exist in the library. Please select different music files.")
+            else:
+                for music_file in music_files:
+                    music_name = os.path.basename(music_file)
+                    music_path = os.path.join(os.getcwd(), 'music', music_name)
+                    # Copy the music file to the music directory
+                    shutil.copy2(music_file, music_path)
+                    # Get the album cover path and name
+                    album_cover_file = filedialog.askopenfilename(title="Select Album Cover", filetypes=[("Image Files", "*.jpg;*.png")])
+                    if album_cover_file:
+                        album_cover_name = music_name.split('.')[0] + os.path.splitext(album_cover_file)[1]
+                        album_cover_path = os.path.join(os.getcwd(), 'album_covers', album_cover_name)
+                        # Copy the album cover to the album_covers directory
+                        shutil.copy2(album_cover_file, album_cover_path)
+                    # Update the playlist
+                    self.musicPlaylist_frame.playlist.insert(END, music_name)
+                    # Add the library name to the song_library list
+                    self.song_library.append(self.menu_frame.variable.get())
+                    # Add the music file to the song list
+                    self.musicplayer_frame.song_list.append(music_path)
+                    self.musicPlaylist_frame.playlist.update_idletasks()  # Force update of the playlist widget
+                break
 
                         
     def change_library(self, library_name):
         self.musicPlaylist_frame.update_playlist(library_name, self.song_library)
+        
         
 if __name__ == '__main__':
     app = User_App()
